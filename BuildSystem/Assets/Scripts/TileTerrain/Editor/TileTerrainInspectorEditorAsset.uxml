@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <uie:Toolbar name="menuToolbar" style="border-top-width: 1px; margin-top: 5px; height: 30px; flex-direction: row; flex-wrap: wrap; flex-shrink: 0; flex-grow: 0; justify-content: flex-start; align-items: center;">
+        <ui:Button text="地形" display-tooltip-when-elided="true" name="TerrainTab" style="width: 100px; height: 20px;" />
+        <ui:Button text="物品" display-tooltip-when-elided="true" name="ItemTab" style="width: 100px; height: 20px;" />
+        <ui:Button text="设置" display-tooltip-when-elided="true" name="SettingTab" style="width: 100px; height: 20px;" />
+    </uie:Toolbar>
+    <ui:VisualElement name="PanelParent" style="height: 109px; width: 328px; flex-direction: column; align-items: flex-start; justify-content: flex-start; margin-top: 5px; margin-right: 0; margin-bottom: 0; margin-left: 0; visibility: visible; left: 2px;">
+        <ui:VisualElement name="TerrainPanle" style="align-items: stretch; justify-content: center;">
+            <ui:Label text="1" display-tooltip-when-elided="true" enable-rich-text="false" name="tabLebel" />
+        </ui:VisualElement>
+        <ui:VisualElement name="ItemPanel" style="align-items: stretch; justify-content: center;">
+            <ui:Label text="2" display-tooltip-when-elided="true" enable-rich-text="false" name="tabLabel" />
+        </ui:VisualElement>
+        <ui:VisualElement name="SettingPanel" style="align-items: stretch; justify-content: center;">
+            <ui:Label text="3" display-tooltip-when-elided="true" enable-rich-text="false" name="tabLabel" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
