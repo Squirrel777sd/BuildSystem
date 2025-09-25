@@ -5,6 +5,7 @@ using UnityEditor;
 using Sirenix.OdinInspector.Editor;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
+using System;
 
 [CustomEditor(typeof(TileTerrain))]
 public class TileTerrainEditor : OdinEditor
@@ -30,10 +31,10 @@ public class TileTerrainEditor : OdinEditor
             base.DrawDefaultInspector();
         });
         root.Add(baseGUI);
+        terrain.SetOnTileConfigChangeAction(OnTileConfigOrDataSet);
         if (terrain.terrainData == null || terrain.tileConfig == null)
         {
             // 监听，如果用户又设置了配置
-            terrain.SetOnTileConfigChangeAction(OnTileConfigOrDataSet);
             return root;
         }
 
@@ -47,10 +48,11 @@ public class TileTerrainEditor : OdinEditor
         if (editorUIAssetInstance == null)
         {
             editorUIAssetInstance = editorUIAsset.Instantiate();
-            initMenu();
             initPanels();
-            switchPanel(PanelType.TERRAIN);
         }
+        initMenu();
+        initSettingPanel();
+        switchPanel(PanelType.TERRAIN);
     }
 
     private TileTerrainTileConfig lastConfig;
@@ -109,10 +111,14 @@ public class TileTerrainEditor : OdinEditor
     private List<Button> menuButtons;
     private static Color noramlMenuItemColor = new Color(0.35f, 0.35f, 0.35f);
     private static Color selectMenuItemColor = new Color(0.24f, 0.57f, 0.7f);
+    private Toggle previewToggle;
     private void initMenu()
     {
         menuButtons = new List<Button>();
         Toolbar toolbar = editorUIAssetInstance.Q<Toolbar>("menuToolbar");
+        previewToggle = editorUIAssetInstance.Q<Toggle>("previewToggle");
+        previewToggle.RegisterValueChangedCallback(previewToggleValueChange);
+        previewToggle.value = terrain.terrainData.enablePreview;
         for (int i = 0; i < toolbar.childCount; i++)
         {
             Button button = toolbar[i] as Button;
@@ -125,10 +131,26 @@ public class TileTerrainEditor : OdinEditor
         }
     }
 
+    private void previewToggleValueChange(ChangeEvent<bool> evt)
+    {
+        terrain.terrainData.enablePreview = evt.newValue;
+        if (evt.newValue)
+        {
+            //绘制地图
+            terrain.CreateAllCell();
+            terrain.CreateAllCellGameObjectForEditor();
+        }
+        else
+        {
+            //取消绘制
+            terrain.CleanCellsForEditor();
+        }
+    }
+
 
     #endregion
 
-    #region 面板
+    #region 面板控制
     private VisualElement panelParent;
     private List<VisualElement> panels;
     private PanelType curPanelType;
@@ -160,6 +182,56 @@ public class TileTerrainEditor : OdinEditor
 
         panelParent.Clear();
         panelParent.Add(panels[(int)panelType]);
+    }
+    #endregion
+
+    #region 设置面板
+    private FloatField cellSize;
+    private Vector3IntField mapSize;
+
+    private void initSettingPanel()
+    {
+        VisualElement panel = panels[(int)PanelType.SETTING];
+        cellSize = panel.Q<FloatField>("CellSize");
+        mapSize = panel.Q<Vector3IntField>("MapSize");
+
+        cellSize.value = terrain.terrainData.cellSize;
+        mapSize.value = terrain.terrainData.mapSize;
+
+        cellSize.RegisterCallback<FocusInEvent>(CellSizeForcusIn);
+        cellSize.RegisterCallback<FocusOutEvent>(CellSizeForcusOut);
+
+        mapSize.RegisterCallback<FocusInEvent>(MapSizeForcursIn);
+        mapSize.RegisterCallback<FocusOutEvent>(MapSizeForcusOut);
+    }
+
+
+    private float oldCellSize;
+    private void CellSizeForcusIn(FocusInEvent evt)
+    {
+        oldCellSize = cellSize.value;
+    }
+
+    private void CellSizeForcusOut(FocusOutEvent evt)
+    {
+        if (oldCellSize != cellSize.value)
+        {
+            terrain.terrainData.SetCellSize(cellSize.value);
+        }
+    }
+
+    private Vector3Int oldMapSize;
+    private void MapSizeForcursIn(FocusInEvent evt)
+    {
+
+    }
+
+    private void MapSizeForcusOut(FocusOutEvent evt)
+    {
+        if (oldMapSize != mapSize.value)
+        {
+            terrain.terrainData.SetMapSize(mapSize.value);
+        }
     }
     #endregion
 }

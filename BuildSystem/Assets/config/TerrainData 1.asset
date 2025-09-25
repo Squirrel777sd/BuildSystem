@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24cbc15778061c9468c81c0b421f42f2, type: 3}
-  m_Name: TileConfig
+  m_Script: {fileID: 11500000, guid: 3af84f7445ef8744499e71490ece860d, type: 3}
+  m_Name: TerrainData 1
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -20,5 +20,10 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
-  tileConfigList: []
+    SerializationNodes:
+    - Name: cellDatas
+      Entry: 6
+      Data: 
+  cellSize: 3
+  mapSize: {x: 10, y: 5, z: 10}
+  enablePreview: 0
