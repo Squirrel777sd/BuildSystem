@@ -21,4 +21,10 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  tileConfigList: []
+  tileConfigList:
+  - name: "\u8349\u5730"
+    forwardPrefab: {fileID: 3416664906331972434, guid: de886ba128a33b64099a1deb8c7677ca, type: 3}
+    backPrefab: {fileID: 3416664906331972434, guid: de886ba128a33b64099a1deb8c7677ca, type: 3}
+    leftPrefab: {fileID: 3416664906331972434, guid: de886ba128a33b64099a1deb8c7677ca, type: 3}
+    rightPrefab: {fileID: 3416664906331972434, guid: de886ba128a33b64099a1deb8c7677ca, type: 3}
+    topPrefab: {fileID: 115375668271999736, guid: 0f8e652454c17b7459c71906dbe2b6e5, type: 3}

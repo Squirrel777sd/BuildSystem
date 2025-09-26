@@ -10,7 +10,7 @@ public class TileTerrainTileConfig : ConfigBase
 {
     [ListDrawerSettings(ShowIndexLabels = true, ShowPaging = false)]
     [OnValueChanged("OnTileConfigChanged")]
-    public List<TerrainTileConfigItem> tileConfigList = new List<TerrainTileConfigItem>();
+    public List<TileTerrainConfigItem> tileConfigList = new List<TileTerrainConfigItem>();
 
 #if UNITY_EDITOR
     private Action onTileConfigChangedAction;
@@ -36,7 +36,7 @@ public class TileTerrainTileConfig : ConfigBase
 }
 
 [Serializable]
-public class TerrainTileConfigItem
+public class TileTerrainConfigItem
 {
 #if UNITY_EDITOR
     public string name;

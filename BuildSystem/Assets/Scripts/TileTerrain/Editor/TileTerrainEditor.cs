@@ -234,4 +234,10 @@ public class TileTerrainEditor : OdinEditor
         }
     }
     #endregion
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        terrain.terrainData.Save();
+    }
 }

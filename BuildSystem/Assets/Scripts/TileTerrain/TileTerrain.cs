@@ -17,12 +17,20 @@ public class TileTerrain : MonoBehaviour
 
     private TileTerrainCellData[,,] cellData
     {
-        get 
+        get
         {
             return terrainData.cellDatas;
         }
     }
     private TileCell[,,] cells;
+
+    public float CellSize
+    {
+        get
+        {
+            return terrainData.cellSize;
+        }
+    }
 
 #if UNITY_EDITOR
     private Action onConfiggOrDataChangeAction;
@@ -46,24 +54,46 @@ public class TileTerrain : MonoBehaviour
     public void CreateAllCellGameObjectForEditor()
     {
         CleanCellsForEditor();
+        for (int x = 0; x < terrainData.mapSize.x; x++)
+        {
+            for (int z = 0; z < terrainData.mapSize.z; z++)
+            {
+                TileCell cell = cells[x, 0, z];
+                if (cell != null)
+                {
+                    cell.CheckAllFace(true, false);
+                }
+                cells[x, 0, z] = cell;
+            }
+        }
     }
 #endif
 
 
+    // 创建具体的格子类 填充数据 但是并不会创建游戏物体
+    // 不能直接绘制，因为运行时，不回绘制全部格子
     public void CreateAllCell()
     {
         if (tileConfig != null && terrainData != null && cellData != null)
         {
             cells = new TileCell[terrainData.mapSize.x, terrainData.mapSize.y, terrainData.mapSize.z];
-            //TODO 创建具体的格子类 填充数据 但是并不会创建游戏物体
-            // 不能直接绘制，因为运行时，不回绘制全部格子
+            for (int x = 0; x < terrainData.mapSize.x; x++)
+            {
+                for (int z = 0; z < terrainData.mapSize.z; z++)
+                {
+                    TileTerrainCellData data = this.terrainData.cellDatas[x, 0, z];
+                    TileCell cell = new TileCell();
+                    cell.init(transform, this, data, tileConfig.tileConfigList[data.Index]);
+                    cells[x, 0, z] = cell;
+                }
+            }
         }
     }
 
 
-    public TileCell GetCell(int x,int y,int z)
+    public TileCell GetCell(int x, int y, int z)
     {
-        if (x < 0 || x > terrainData.mapSize.x || y < 0 || y > terrainData.mapSize.y || z < 0 || z > terrainData.mapSize.z)
+        if (x < 0 || x >= terrainData.mapSize.x || y < 0 || y >= terrainData.mapSize.y || z < 0 || z >= terrainData.mapSize.z)
         {
             return null;
         }
@@ -84,7 +114,6 @@ public class TileTerrain : MonoBehaviour
     {
         return GetCell(coord.x, coord.y, coord.z - 1);
     }
-
 
     public TileCell GetLeftCell(Vector3Int coord)
     {

@@ -17,7 +17,7 @@ public class TileTerrainData : ConfigBase
 
 #if UNITY_EDITOR
     public bool enablePreview;
-    private void Save()
+    public void Save()
     {
         EditorUtility.SetDirty(this);
         AssetDatabase.SaveAssetIfDirty(this);
@@ -26,12 +26,14 @@ public class TileTerrainData : ConfigBase
     public void SetCellSize(float cellSize)
     {
         this.cellSize = cellSize;
+        this.CreateDefultData();
         Save();
     }
 
     public void SetMapSize(Vector3Int mapSize)
     {
         this.mapSize = mapSize;
+        this.CreateDefultData();
         Save();
     }
 
@@ -42,12 +44,17 @@ public class TileTerrainData : ConfigBase
 
     public void CreateDefultData()
     {
-        for (int i = 0; i < mapSize.x; i++)
+        cellDatas = new TileTerrainCellData[mapSize.x, mapSize.y, mapSize.z];
+        for (int x = 0; x < mapSize.x; x++)
         {
-            for (int j = 0; j < mapSize.z; j++)
+            for (int y = 0; y < mapSize.y; y++)
             {
-                TileTerrainCellData cellData = new TileTerrainCellData();
-                cellData.Init(0, new Vector3Int(i, 0, j), cellSize);
+                for (int z = 0; z < mapSize.z; z++)
+                {
+                    TileTerrainCellData cellData = new TileTerrainCellData();
+                    cellData.Init(0, new Vector3Int(x, y, z), cellSize);
+                    cellDatas[x, y, z] = cellData;
+                }
             }
         }
     }
@@ -61,9 +68,21 @@ public class TileTerrainData : ConfigBase
 [Serializable]
 public class TileTerrainCellData
 {
-    private int index;
+    public int index;
+    public int Index
+    {
+        get
+        {
+            return index;
+        }
+        set
+        {
+            index = value;
+        }
+    }
     public Vector3 postion;
     public Vector3Int coord;
+
 
     public void Init(int index, Vector3Int coord, float cellSize)
     {
