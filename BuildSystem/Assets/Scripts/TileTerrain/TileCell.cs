@@ -48,7 +48,7 @@ public class TileCell
 
     private void creatCellRoot()
     {
-        if (UnityEngine.Object.Equals(cellRoot, null))
+        if (cellRoot == null)
         {
             cellRoot = new GameObject();
             cellRoot.transform.SetParent(_parent);

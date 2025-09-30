@@ -5,6 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - editorUIAsset: {fileID: 9197481963319205126, guid: 07d884d7eba850348afb7f3df8348c6c, type: 3}
+  - prefab: {fileID: 115375668271999736, guid: 0f8e652454c17b7459c71906dbe2b6e5, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

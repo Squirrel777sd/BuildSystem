@@ -21,7 +21,7 @@ public class TileTerrainTileConfig : ConfigBase
 
     public bool isSetConfigChangeAction()
     { 
-        return onTileConfigChangedAction == null;
+        return onTileConfigChangedAction != null;
     }
 
     public void ClearAction()

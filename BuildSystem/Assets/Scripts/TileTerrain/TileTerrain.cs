@@ -15,6 +15,8 @@ public class TileTerrain : MonoBehaviour
     [OnValueChanged("OnConfigOrDataChanged")]
     public TileTerrainData terrainData;
 
+
+    public GameObject testGo;
     private TileTerrainCellData[,,] cellData
     {
         get
