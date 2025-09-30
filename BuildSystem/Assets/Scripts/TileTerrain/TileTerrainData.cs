@@ -11,7 +11,7 @@ using UnityEditor;
 [CreateAssetMenu(fileName = "TerrainData", menuName = "TileTerrain/TerrainData")]
 public class TileTerrainData : ConfigBase
 {
-    public float cellSize;
+    public float cellSize = 1;
     public Vector3Int mapSize = new Vector3Int(10, 5, 10);
     public TileTerrainCellData[,,] cellDatas;
 
@@ -68,26 +68,43 @@ public class TileTerrainData : ConfigBase
 [Serializable]
 public class TileTerrainCellData
 {
-    public int index;
+    [SerializeField]
+    private int index;
     public int Index
     {
         get
         {
             return index;
         }
-        set
+    }
+    [SerializeField]
+    private Vector3Int coord;
+    public Vector3Int Coord 
+    {
+        get
         {
-            index = value;
+            return coord;
         }
     }
-    public Vector3 postion;
-    public Vector3Int coord;
+
+    private Vector3 postion;
+    public Vector3 Postion
+    {
+        get
+        {
+            return postion;
+        }
+    }
 
 
     public void Init(int index, Vector3Int coord, float cellSize)
     {
         this.index = index;
         this.coord = coord;
+    }
+
+    public void InitPostion(float cellSize)
+    {
         this.postion = new Vector3(coord.x * cellSize + cellSize / 2, coord.y * cellSize, coord.z * cellSize + cellSize / 2);
     }
 }

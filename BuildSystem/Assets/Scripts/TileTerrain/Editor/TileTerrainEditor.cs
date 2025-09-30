@@ -24,24 +24,6 @@ public class TileTerrainEditor : OdinEditor
     private IMGUIContainer baseGUI;
     private TileTerrain terrain { get => (TileTerrain)target; }
     public GameObject prefab;
-    public override VisualElement CreateInspectorGUI()
-    {
-        root = new VisualElement();
-        baseGUI = new IMGUIContainer(() =>
-        {
-            base.DrawDefaultInspector();
-        });
-        root.Add(baseGUI);
-        terrain.SetOnTileConfigChangeAction(OnTileConfigOrDataSet);
-        if (terrain.terrainData == null || terrain.tileConfig == null)
-        {
-            // 监听，如果用户又设置了配置
-            return root;
-        }
-
-        DrawEditor();
-        return root;
-    }
 
     private void init()
     {
@@ -112,48 +94,25 @@ public class TileTerrainEditor : OdinEditor
         }
     }
 
-    private void OnSceneGUI()
+
+    #region 公共方法 
+    private Camera SceneCamera
     {
-        if (terrain.terrainData == null || terrain.tileConfig == null || terrain.terrainData.enablePreview == false)
+        get
         {
-            return;
-        }
-
-        if (this.operationTypeDp.index != 0 && this.curSelectPrefabView != null)
-        {
-            // 禁止用户选择游戏物体
-            HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
-        }
-
-        MeshFilter[] meshFilters = terrain.GetComponentsInChildren<MeshFilter>();
-        for (int i = 0; i < meshFilters.Length; i++)
-        {
-            MeshFilter meshFilter = meshFilters[i];
-            Ray ray;
-            SceneView sceneView = SceneView.currentDrawingSceneView;
-            Camera camera = sceneView.camera;
-            Vector2 eventMousePosition = Event.current.mousePosition;
-            Vector3 mousePosition = new Vector3(eventMousePosition.x, camera.pixelHeight - eventMousePosition.y, 0);
-            ray = camera.ScreenPointToRay(mousePosition);
-            RaycastHit hitInfo;
-            bool isHit = InterscetRayMeshTool.IntersectRayMesh(ray, meshFilter, out hitInfo);
-            if (isHit)
-            {
-                terrain.testGo.transform.position = hitInfo.point;
-            }
+            return SceneView.currentDrawingSceneView.camera;
         }
     }
 
-    protected override void OnDisable()
+    private Vector3 getMousePosition()
     {
-        if (terrain.terrainData != null)
-        {
-            terrain.terrainData.Save();
-        }
-        ClearPrefabPreviews();
-        base.OnDisable();
-    }
+        Vector2 eventMousePos = Event.current.mousePosition;
+        Vector3 mousePosition = eventMousePos;
+        mousePosition.y = SceneCamera.pixelHeight - eventMousePos.y;
+        return mousePosition;
 
+    }
+    #endregion
 
     #region 菜单
     enum PanelType
@@ -243,7 +202,7 @@ public class TileTerrainEditor : OdinEditor
 
     #region 地形面板
     private static List<TilePrefabPreView> tilePrefabPreViews = new List<TilePrefabPreView>();
-    private TilePrefabPreView curSelectPrefabView;
+    private static TilePrefabPreView curSelectPrefabView;
     private VisualElement scrollContent;
     private DropdownField operationTypeDp;
 
@@ -270,11 +229,13 @@ public class TileTerrainEditor : OdinEditor
     private void initTileTerrainPanel()
     {
         ClearPrefabPreviews();
+        onSelectPreViewPrefab(curSelectPrefabView);
         if (scrollContent == null)
         {
             scrollContent = panels[(int)PanelType.TERRAIN].Q<ScrollView>("TileTerrainPrefabView").contentContainer;
         }
         operationTypeDp = panels[(int)PanelType.TERRAIN].Q<DropdownField>("operationTypeDp");
+        operationTypeDp.RegisterValueChangedCallback(onDpValueChange);
         for (int i = 0; i < terrain.tileConfig.tileConfigList.Count; i++)
         {
             GameObject prefab = terrain.tileConfig.tileConfigList[i].topPrefab;
@@ -284,6 +245,69 @@ public class TileTerrainEditor : OdinEditor
             EditorUtility.SetDirty(terrain);
         }
 
+    }
+
+    private static int curOperation = -1;
+    private void onDpValueChange(ChangeEvent<string> evt)
+    {
+        operationTypeDp.value = evt.newValue;
+        curOperation = operationTypeDp.index;
+    }
+
+    private void onTileTerrainPanelSceneUI()
+    {
+        if (curOperation != 0 && curSelectPrefabView != null)
+        {
+            // 禁止用户选择游戏物体
+            HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+
+            MeshFilter[] meshFilters = terrain.GetComponentsInChildren<MeshFilter>();
+            Vector3 mousePosition = getMousePosition();
+            Ray ray = SceneCamera.ScreenPointToRay(mousePosition);
+            for (int i = 0; i < meshFilters.Length; i++)
+            {
+                MeshFilter meshFilter = meshFilters[i];
+                RaycastHit hitInfo;
+                bool isHit = InterscetRayMeshTool.IntersectRayMesh(ray, meshFilter, out hitInfo);
+                if (isHit)
+                {
+                    terrain.testGo.transform.position = hitInfo.point;
+                    Vector3Int coord = terrain.getCoordByWorldPosition(hitInfo.point);
+                    if (curOperation == 1)
+                    {
+                        TileCell topCell = terrain.GetTopCell(coord);
+                        if (topCell == null)
+                        {
+                            terrain.SetWireCubePosAndOperation(coord, curOperation);
+                        }
+                    }
+                    else
+                    {
+                        terrain.SetWireCubePosAndOperation(coord, curOperation);
+                    }
+                    if (Event.current.type == EventType.MouseDown)
+                    {
+                        if (curOperation == 1)
+                        {
+                            Debug.Log("抬高");
+                        }
+                        else if (curOperation == 2)
+                        {
+                            Debug.Log("降低");
+                        }
+                        else if (curOperation == 3)
+                        {
+                            Debug.Log("替换");
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        else
+        {
+            terrain.SetWireCubePosAndOperation(Vector3Int.one * -1,-1);
+        }
     }
     #endregion
 
@@ -339,6 +363,64 @@ public class TileTerrainEditor : OdinEditor
                 terrain.CreateAllCellGameObjectForEditor();
             }
         }
+    }
+    #endregion
+
+    #region 系统方法
+    public override VisualElement CreateInspectorGUI()
+    {
+        root = new VisualElement();
+        baseGUI = new IMGUIContainer(() =>
+        {
+            base.DrawDefaultInspector();
+        });
+        root.Add(baseGUI);
+        terrain.SetOnTileConfigChangeAction(OnTileConfigOrDataSet);
+        if (terrain.terrainData == null || terrain.tileConfig == null)
+        {
+            // 监听，如果用户又设置了配置
+            return root;
+        }
+
+        DrawEditor();
+        return root;
+    }
+
+    private void OnSceneGUI()
+    {
+
+        if (terrain == null)
+        {
+            return;
+        }
+        if (terrain.terrainData == null || terrain.tileConfig == null || terrain.terrainData.enablePreview == false)
+        {
+            return;
+        }
+
+
+        switch (curPanelType)
+        {
+            case PanelType.TERRAIN:
+                onTileTerrainPanelSceneUI();
+                break;
+            case PanelType.ITEM:
+                break;
+            case PanelType.SETTING:
+                break;
+        }
+
+    }
+
+    protected override void OnDisable()
+    {
+        if (terrain.terrainData != null)
+        {
+            terrain.terrainData.Save();
+        }
+        curSelectPrefabView = null;
+        ClearPrefabPreviews();
+        base.OnDisable();
     }
     #endregion
 }

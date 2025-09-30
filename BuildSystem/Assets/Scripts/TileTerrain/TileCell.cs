@@ -52,8 +52,8 @@ public class TileCell
         {
             cellRoot = new GameObject();
             cellRoot.transform.SetParent(_parent);
-            cellRoot.transform.position = _cellData.postion;
-            cellRoot.name = $"{_cellData.coord.x}_{_cellData.coord.y}_{_cellData.coord.z}";
+            cellRoot.transform.position = _cellData.Postion;
+            cellRoot.name = $"{_cellData.Coord.x}_{_cellData.Coord.y}_{_cellData.Coord.z}";
         }
     }
 
@@ -73,7 +73,7 @@ public class TileCell
 
     public void CheckForward(bool createObj, bool usePool)
     {
-        showForward = _terrain.GetForwordCell(_cellData.coord) == null;
+        showForward = _terrain.GetForwordCell(_cellData.Coord) == null;
         if (showForward)
         {
             if (createObj && fowardGo == null)
@@ -109,7 +109,7 @@ public class TileCell
 
     public void CheckBack(bool createObj, bool usePool)
     {
-        showBack = _terrain.GetBackCell(_cellData.coord) == null;
+        showBack = _terrain.GetBackCell(_cellData.Coord) == null;
         if (showBack)
         {
             if (createObj && backGo == null)
@@ -145,7 +145,7 @@ public class TileCell
 
     public void CheckLeft(bool createObj, bool usePool)
     {
-        showLeft = _terrain.GetLeftCell(_cellData.coord) == null;
+        showLeft = _terrain.GetLeftCell(_cellData.Coord) == null;
         if (showLeft)
         {
             if (createObj && leftGo == null)
@@ -181,7 +181,7 @@ public class TileCell
 
     public void CheckRight(bool createObj, bool usePool)
     {
-        showRight = _terrain.GetRightCell(_cellData.coord) == null;
+        showRight = _terrain.GetRightCell(_cellData.Coord) == null;
         if (showRight)
         {
             if (createObj && rightGo == null)
@@ -217,7 +217,7 @@ public class TileCell
 
     public void CheckTop(bool createObj, bool usePool)
     {
-        showTop = _terrain.GetTopCell(_cellData.coord) == null;
+        showTop = _terrain.GetTopCell(_cellData.Coord) == null;
         if (showTop)
         {
             if (createObj && topGo == null)
@@ -249,6 +249,12 @@ public class TileCell
             }
             topGo = null;
         }
+    }
+
+
+    public Vector3 GetCellPosition()
+    {
+        return _cellData.Postion;
     }
 
     #endregion
