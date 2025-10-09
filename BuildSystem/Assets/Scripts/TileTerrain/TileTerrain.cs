@@ -60,7 +60,7 @@ public class TileTerrain : MonoBehaviour
         CleanCellsForEditor();
         for (int x = 0; x < terrainData.mapSize.x; x++)
         {
-            for (int y = 0; y < terrainData.mapSize.y; y++)
+            for (int y = 0; y < 1; y++)
             {
                 for (int z = 0; z < terrainData.mapSize.z; z++)
                 {
@@ -77,7 +77,7 @@ public class TileTerrain : MonoBehaviour
 
     private Vector3Int wireCubePos;
     private int operationType = -1;
-    public void SetWireCubePosAndOperation(Vector3Int pos,int operationType)
+    public void SetWireCubePosAndOperation(Vector3Int pos, int operationType)
     {
         wireCubePos = pos;
         this.operationType = operationType;
@@ -88,8 +88,8 @@ public class TileTerrain : MonoBehaviour
         if (terrainData.enablePreview && wireCubePos != null && wireCubePos != Vector3.one * -1)
         {
             if (wireCubePos.x > terrainData.mapSize.x ||
-                wireCubePos.y > terrainData.mapSize.y || 
-                wireCubePos.z > terrainData.mapSize.z || 
+                wireCubePos.y > terrainData.mapSize.y ||
+                wireCubePos.z > terrainData.mapSize.z ||
                 operationType == -1)
             {
                 return;
@@ -124,7 +124,7 @@ public class TileTerrain : MonoBehaviour
             cells = new TileCell[terrainData.mapSize.x, terrainData.mapSize.y, terrainData.mapSize.z];
             for (int x = 0; x < terrainData.mapSize.x; x++)
             {
-                for (int y = 0; y < terrainData.mapSize.y; y++)
+                for (int y = 0; y < 1; y++)
                 {
                     for (int z = 0; z < terrainData.mapSize.z; z++)
                     {
@@ -137,6 +137,56 @@ public class TileTerrain : MonoBehaviour
                 }
             }
         }
+    }
+    public TileCell CreateCell(int configIndex, Vector3Int coord, TileTerrainCellData cellData)
+    {
+        TileCell tileCell = new TileCell();
+        TileTerrainConfigItem item = tileConfig.tileConfigList[configIndex];
+        tileCell.init(transform, this, cellData, item);
+        cells[coord.x, coord.y, coord.z] = tileCell;
+        return tileCell;
+    }
+
+    public void AddCell(int configIndex, Vector3Int coord)
+    {
+        TileTerrainCellData cellData = terrainData.AddCellData(configIndex, coord);
+        TileCell tileCell = CreateCell(configIndex, coord, cellData);
+        tileCell.CheckAllFace(true,false);
+        GetForwordCell(coord)?.CheckAllFace(true,false);
+        GetBackCell(coord)?.CheckAllFace(true,false);
+        GetLeftCell(coord)?.CheckAllFace(true,false);
+        GetRightCell(coord)?.CheckAllFace(true,false);
+        GetBottomCell(coord)?.CheckAllFace(true,false);
+        GetTopCell(coord)?.CheckAllFace(true,false);
+    }
+
+    public void RemoveCell(Vector3Int coord)
+    {
+        if (coord.y < 1)
+        {
+            Debug.LogError("最底层不能删除");
+            return;
+        }
+        TileCell cell = cells[coord.x, coord.y, coord.z];
+        if (cell == null)
+        {
+            Debug.LogError("删除对象为null");
+            return;
+        }
+        cell.DestoryGameObject(false);
+        cells[coord.x, coord.y, coord.z] = null;
+        GetBackCell(coord)?.CheckAllFace(true, false);
+        GetLeftCell(coord)?.CheckAllFace(true, false);
+        GetRightCell(coord)?.CheckAllFace(true, false);
+        GetBottomCell(coord)?.CheckAllFace(true, false);
+        GetTopCell(coord)?.CheckAllFace(true, false);
+    }
+
+    public void ReplaceCell(Vector3Int coord,int configIndex)
+    {
+        TileTerrainConfigItem configItem = tileConfig.tileConfigList[configIndex];
+        TileCell cell = cells[coord.x, coord.y, coord.z];
+        cell.ReplaceAll(configItem);
     }
 
     public TileCell GetCell(int x, int y, int z)
@@ -197,5 +247,6 @@ public class TileTerrain : MonoBehaviour
 
         return new Vector3Int(x, y, z);
     }
+
     #endregion
 }

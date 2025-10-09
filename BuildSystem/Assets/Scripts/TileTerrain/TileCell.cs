@@ -43,18 +43,22 @@ public class TileCell
         this._cellData = cellData;
         this._cellConfig = configItem;
         this._terrain = terrainParent;
-
     }
 
-    private void creatCellRoot()
+    private void creatCellRoot(bool usePool)
     {
+        if (usePool)
+        {
+            cellRoot = PoolSystem.GetGameObject("tileRoot");
+        }
         if (cellRoot == null)
         {
             cellRoot = new GameObject();
-            cellRoot.transform.SetParent(_parent);
-            cellRoot.transform.position = _cellData.Postion;
-            cellRoot.name = $"{_cellData.Coord.x}_{_cellData.Coord.y}_{_cellData.Coord.z}";
+            cellRoot.name = "tileRoot";
         }
+        cellRoot.transform.SetParent(_parent);
+        cellRoot.transform.position = _cellData.Postion;
+        cellRoot.name = $"{_cellData.Coord.x}_{_cellData.Coord.y}_{_cellData.Coord.z}";
     }
 
     #region 检查面
@@ -62,7 +66,7 @@ public class TileCell
     {
         if (createObj)
         {
-            creatCellRoot();
+            creatCellRoot(usePool);
         }
         CheckForward(createObj, usePool);
         CheckBack(createObj, usePool);
@@ -84,7 +88,7 @@ public class TileCell
                 }
                 if (fowardGo == null)
                 {
-                    fowardGo = GameObject.Instantiate(_cellConfig.forwardPrefab,cellRoot.transform);
+                    fowardGo = GameObject.Instantiate(_cellConfig.forwardPrefab, cellRoot.transform);
                     fowardGo.name = "forward";
                     Transform trans = fowardGo.transform;
                     trans.localScale = Vector3.one * _terrain.CellSize;
@@ -252,10 +256,58 @@ public class TileCell
     }
 
 
+    public void ReplaceAll(TileTerrainConfigItem configItem)
+    {
+        this._cellConfig = configItem;
+        if (showForward)
+        {
+            fowardGo.GetComponent<MeshFilter>().sharedMesh = configItem.forwardPrefab.GetComponent<MeshFilter>().sharedMesh;
+            fowardGo.GetComponent<MeshRenderer>().sharedMaterial = configItem.forwardPrefab.GetComponent<MeshRenderer>().sharedMaterial;
+        }
+        if (showBack)
+        {
+            backGo.GetComponent<MeshFilter>().sharedMesh = configItem.backPrefab.GetComponent<MeshFilter>().sharedMesh;
+            backGo.GetComponent<MeshRenderer>().sharedMaterial = configItem.backPrefab.GetComponent<MeshRenderer>().sharedMaterial;
+        }
+        if (showLeft)
+        {
+            leftGo.GetComponent<MeshFilter>().sharedMesh = configItem.leftPrefab.GetComponent<MeshFilter>().sharedMesh;
+            leftGo.GetComponent<MeshRenderer>().sharedMaterial = configItem.leftPrefab.GetComponent<MeshRenderer>().sharedMaterial;
+        }
+
+        if (showRight)
+        {
+            rightGo.GetComponent<MeshFilter>().sharedMesh = configItem.rightPrefab.GetComponent<MeshFilter>().sharedMesh;
+            rightGo.GetComponent<MeshRenderer>().sharedMaterial = configItem.rightPrefab.GetComponent<MeshRenderer>().sharedMaterial;
+        }
+
+        if (showTop)
+        {
+            topGo.GetComponent<MeshFilter>().sharedMesh = configItem.topPrefab.GetComponent<MeshFilter>().sharedMesh;
+            topGo.GetComponent<MeshRenderer>().sharedMaterial = configItem.topPrefab.GetComponent<MeshRenderer>().sharedMaterial;
+        }
+    }
+
     public Vector3 GetCellPosition()
     {
         return _cellData.Postion;
     }
 
     #endregion
+
+    public void DestoryGameObject(bool usePool)
+    {
+        if (usePool)
+        {
+            PoolSystem.PushGameObject(cellRoot);
+        }
+        else
+        {
+#if UNITY_EDITOR
+            GameObject.DestroyImmediate(cellRoot);
+            return;
+#endif
+            GameObject.Destroy(cellRoot);
+        }
+    }
 }

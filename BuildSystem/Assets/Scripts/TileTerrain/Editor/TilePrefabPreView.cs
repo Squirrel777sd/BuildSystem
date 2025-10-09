@@ -13,13 +13,22 @@ public class TilePrefabPreView
     private IMGUIContainer IMGUIContainer;
     private Action<TilePrefabPreView> mouseSelectCallBack;
     private string prefabName;
-    public void Init(VisualElement rootElement,GameObject prefab,Action<TilePrefabPreView> mouseSelectCallBack)
+    private int tileConfigIndex;
+    public int TileConfigIndex
+    {
+        get
+        {
+            return tileConfigIndex;
+        }
+    }
+    public void Init(VisualElement rootElement,int tileConfigIndex,GameObject prefab,Action<TilePrefabPreView> mouseSelectCallBack)
     {
         this.rootElement = rootElement;
         this.tilePrefab = prefab;
         tileMaterial = prefab.GetComponent<MeshRenderer>().sharedMaterial;
         tileMesh = prefab.GetComponent<MeshFilter>().sharedMesh;
         this.prefabName = prefab.name;
+        this.tileConfigIndex = tileConfigIndex;
 
         IMGUIContainer = new IMGUIContainer();
         IMGUIContainer.style.height = 35;
@@ -83,7 +92,6 @@ public class TilePrefabPreView
             renderUtility.Cleanup();
         }
         renderUtility = null;
-        //IMGUIContainer.onGUIHandler = null;
         rootElement.Remove(IMGUIContainer);
     }
 }

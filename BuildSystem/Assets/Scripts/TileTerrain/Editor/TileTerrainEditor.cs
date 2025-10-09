@@ -240,7 +240,7 @@ public class TileTerrainEditor : OdinEditor
         {
             GameObject prefab = terrain.tileConfig.tileConfigList[i].topPrefab;
             TilePrefabPreView preView = new TilePrefabPreView();
-            preView.Init(scrollContent, prefab, onSelectPreViewPrefab);
+            preView.Init(scrollContent, i, prefab, onSelectPreViewPrefab);
             tilePrefabPreViews.Add(preView);
             EditorUtility.SetDirty(terrain);
         }
@@ -267,6 +267,10 @@ public class TileTerrainEditor : OdinEditor
             for (int i = 0; i < meshFilters.Length; i++)
             {
                 MeshFilter meshFilter = meshFilters[i];
+                if (meshFilter == null)
+                {
+                    continue;
+                }
                 RaycastHit hitInfo;
                 bool isHit = InterscetRayMeshTool.IntersectRayMesh(ray, meshFilter, out hitInfo);
                 if (isHit)
@@ -289,24 +293,26 @@ public class TileTerrainEditor : OdinEditor
                     {
                         if (curOperation == 1)
                         {
-                            Debug.Log("Ì§¸ß");
+                            terrain.AddCell(curSelectPrefabView.TileConfigIndex, new Vector3Int(coord.x, coord.y + 1, coord.z));
                         }
                         else if (curOperation == 2)
                         {
                             Debug.Log("½µµÍ");
+                            terrain.RemoveCell(coord);
                         }
                         else if (curOperation == 3)
                         {
                             Debug.Log("Ìæ»»");
+                            terrain.ReplaceCell(coord, curSelectPrefabView.TileConfigIndex);
                         }
                     }
-                    break;
+                    //break;
                 }
             }
         }
         else
         {
-            terrain.SetWireCubePosAndOperation(Vector3Int.one * -1,-1);
+            terrain.SetWireCubePosAndOperation(Vector3Int.one * -1, -1);
         }
     }
     #endregion
@@ -388,7 +394,10 @@ public class TileTerrainEditor : OdinEditor
 
     private void OnSceneGUI()
     {
-
+        if (true)
+        {
+            //Debug.Log(1);
+        }
         if (terrain == null)
         {
             return;
@@ -410,6 +419,11 @@ public class TileTerrainEditor : OdinEditor
                 break;
         }
 
+    }
+
+    private void test()
+    { 
+        
     }
 
     protected override void OnDisable()

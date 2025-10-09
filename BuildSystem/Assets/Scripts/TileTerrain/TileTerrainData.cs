@@ -58,6 +58,29 @@ public class TileTerrainData : ConfigBase
             }
         }
     }
+
+    public TileTerrainCellData AddCellData(int configIndex,Vector3Int coord)
+    {
+        if (coord.y >= mapSize.y)
+        {
+            Debug.LogError("无法再抬高,超出地图上限");
+        }
+        TileTerrainCellData terrainCellData = new TileTerrainCellData();
+        terrainCellData.Init(configIndex,coord,this.cellSize);
+        terrainCellData.InitPostion(cellSize);
+        cellDatas[coord.x, coord.y, coord.z] = terrainCellData;
+        return terrainCellData;
+    }
+
+    public void RemoveCellData()
+    { 
+    
+    }
+
+    public void replaceCellData()
+    { 
+        
+    }
 #endif
 }
 
