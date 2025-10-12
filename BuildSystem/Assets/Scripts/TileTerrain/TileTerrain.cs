@@ -17,6 +17,9 @@ public class TileTerrain : MonoBehaviour
 
 
     public GameObject testGo;
+
+    public Transform tileParent;
+    public Transform itemParent;
     private TileTerrainCellData[,,] cellData
     {
         get
@@ -49,9 +52,13 @@ public class TileTerrain : MonoBehaviour
 
     public void CleanCellsForEditor()
     {
-        while (transform.childCount > 0)
+        while (tileParent.childCount > 0)
         {
-            DestroyImmediate(transform.GetChild(0).gameObject);
+            DestroyImmediate(tileParent.GetChild(0).gameObject);
+        }
+        while (itemParent.childCount > 0)
+        {
+            DestroyImmediate(itemParent.GetChild(0).gameObject);
         }
     }
 
@@ -60,7 +67,7 @@ public class TileTerrain : MonoBehaviour
         CleanCellsForEditor();
         for (int x = 0; x < terrainData.mapSize.x; x++)
         {
-            for (int y = 0; y < 1; y++)
+            for (int y = 0; y < terrainData.mapSize.y; y++)
             {
                 for (int z = 0; z < terrainData.mapSize.z; z++)
                 {
@@ -68,8 +75,9 @@ public class TileTerrain : MonoBehaviour
                     if (cell != null)
                     {
                         cell.CheckAllFace(true, false);
+                        cell.CheckItem(true,false);
+                        cells[x, y, z] = cell;
                     }
-                    cells[x, y, z] = cell;
                 }
             }
         }
@@ -124,15 +132,18 @@ public class TileTerrain : MonoBehaviour
             cells = new TileCell[terrainData.mapSize.x, terrainData.mapSize.y, terrainData.mapSize.z];
             for (int x = 0; x < terrainData.mapSize.x; x++)
             {
-                for (int y = 0; y < 1; y++)
+                for (int y = 0; y < terrainData.mapSize.y; y++)
                 {
                     for (int z = 0; z < terrainData.mapSize.z; z++)
                     {
                         TileTerrainCellData data = this.terrainData.cellDatas[x, y, z];
-                        data.InitPostion(CellSize);
-                        TileCell cell = new TileCell();
-                        cell.init(transform, this, data, tileConfig.tileConfigList[y >= 1 ? 1 : y]);
-                        cells[x, y, z] = cell;
+                        if (data != null)
+                        {
+                            data.InitPostion(CellSize);
+                            TileCell cell = new TileCell();
+                            cell.init(tileParent, itemParent, this, data, tileConfig.tileConfigList[data.Index]);
+                            cells[x, y, z] = cell;
+                        }
                     }
                 }
             }
@@ -142,7 +153,7 @@ public class TileTerrain : MonoBehaviour
     {
         TileCell tileCell = new TileCell();
         TileTerrainConfigItem item = tileConfig.tileConfigList[configIndex];
-        tileCell.init(transform, this, cellData, item);
+        tileCell.init(tileParent, itemParent, this, cellData, item);
         cells[coord.x, coord.y, coord.z] = tileCell;
         return tileCell;
     }
@@ -151,13 +162,13 @@ public class TileTerrain : MonoBehaviour
     {
         TileTerrainCellData cellData = terrainData.AddCellData(configIndex, coord);
         TileCell tileCell = CreateCell(configIndex, coord, cellData);
-        tileCell.CheckAllFace(true,false);
-        GetForwordCell(coord)?.CheckAllFace(true,false);
-        GetBackCell(coord)?.CheckAllFace(true,false);
-        GetLeftCell(coord)?.CheckAllFace(true,false);
-        GetRightCell(coord)?.CheckAllFace(true,false);
-        GetBottomCell(coord)?.CheckAllFace(true,false);
-        GetTopCell(coord)?.CheckAllFace(true,false);
+        tileCell.CheckAllFace(true, false);
+        GetForwordCell(coord)?.CheckAllFace(true, false);
+        GetBackCell(coord)?.CheckAllFace(true, false);
+        GetLeftCell(coord)?.CheckAllFace(true, false);
+        GetRightCell(coord)?.CheckAllFace(true, false);
+        GetBottomCell(coord)?.CheckAllFace(true, false);
+        GetTopCell(coord)?.CheckAllFace(true, false);
     }
 
     public void RemoveCell(Vector3Int coord)
@@ -167,6 +178,7 @@ public class TileTerrain : MonoBehaviour
             Debug.LogError("×îµ×²ã²»ÄÜÉ¾³ý");
             return;
         }
+        terrainData.RemoveCell(coord);
         TileCell cell = cells[coord.x, coord.y, coord.z];
         if (cell == null)
         {
@@ -182,11 +194,11 @@ public class TileTerrain : MonoBehaviour
         GetTopCell(coord)?.CheckAllFace(true, false);
     }
 
-    public void ReplaceCell(Vector3Int coord,int configIndex)
+    public void ReplaceCell(Vector3Int coord, int configIndex)
     {
         TileTerrainConfigItem configItem = tileConfig.tileConfigList[configIndex];
         TileCell cell = cells[coord.x, coord.y, coord.z];
-        cell.ReplaceAll(configItem);
+        cell.ReplaceAll(configItem, configIndex);
     }
 
     public TileCell GetCell(int x, int y, int z)
@@ -248,5 +260,15 @@ public class TileTerrain : MonoBehaviour
         return new Vector3Int(x, y, z);
     }
 
+
+    public List<ItemConfigItem> getItemConfigList()
+    {
+        return tileConfig.itemConfigList;
+    }
+
+    public List<TileTerrainConfigItem> getTileConfigList()
+    {
+        return tileConfig.tileConfigList;
+    }
     #endregion
 }

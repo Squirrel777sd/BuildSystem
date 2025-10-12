@@ -1,5 +1,6 @@
 ﻿using JKFrame;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TileCell
@@ -21,7 +22,8 @@ public class TileCell
     private TileTerrain _terrain;
     private TileTerrainCellData _cellData;
     private TileTerrainConfigItem _cellConfig;
-    private Transform _parent;
+    private Transform _tileParent;
+    private Transform _itemParent;
 
     public GameObject cellRoot;
 
@@ -31,15 +33,18 @@ public class TileCell
     private GameObject rightGo;
     private GameObject topGo;
 
+    public GameObject itemGo;
+
     private bool showForward;
     private bool showBack;
     private bool showLeft;
     private bool showRight;
     private bool showTop;
 
-    public void init(Transform parentTrans, TileTerrain terrainParent, TileTerrainCellData cellData, TileTerrainConfigItem configItem)
+    public void init(Transform tileParent, Transform itemParent, TileTerrain terrainParent, TileTerrainCellData cellData, TileTerrainConfigItem configItem)
     {
-        this._parent = parentTrans;
+        this._tileParent = tileParent;
+        this._itemParent = itemParent;
         this._cellData = cellData;
         this._cellConfig = configItem;
         this._terrain = terrainParent;
@@ -56,7 +61,7 @@ public class TileCell
             cellRoot = new GameObject();
             cellRoot.name = "tileRoot";
         }
-        cellRoot.transform.SetParent(_parent);
+        cellRoot.transform.SetParent(_tileParent);
         cellRoot.transform.position = _cellData.Postion;
         cellRoot.name = $"{_cellData.Coord.x}_{_cellData.Coord.y}_{_cellData.Coord.z}";
     }
@@ -256,8 +261,9 @@ public class TileCell
     }
 
 
-    public void ReplaceAll(TileTerrainConfigItem configItem)
+    public void ReplaceAll(TileTerrainConfigItem configItem, int configIndex)
     {
+        this._cellData.SetConfigIndex(configIndex);
         this._cellConfig = configItem;
         if (showForward)
         {
@@ -295,6 +301,52 @@ public class TileCell
 
     #endregion
 
+    /// <summary>
+    /// 检查是否已经存在物品
+    /// </summary>
+    /// <param name="usePool"></param>
+    public void CheckItem(bool createObj, bool usePool)
+    {
+        if (itemGo != null)
+        {
+#if UNITY_EDITOR
+            GameObject.DestroyImmediate(itemGo);
+            itemGo = null;
+#endif
+            if (itemGo != null)
+            {
+                GameObject.Destroy(itemGo);
+                itemGo = null;
+            }
+        }
+        if (createObj)
+        {
+            CreateItem(false);
+        }
+    }
+
+    public void CreateItem(bool usePool)
+    {
+        if (this._cellData.ItemConfigIndex == -1)
+        {
+            return;
+        }
+        List<ItemConfigItem> list = this._terrain.getItemConfigList();
+        itemGo = GameObject.Instantiate(list[this._cellData.ItemConfigIndex].prefab, _itemParent);
+        itemGo.transform.localPosition = this._cellData.Postion + this._terrain.CellSize * Vector3.up;
+    }
+
+    public void SetItem(int itemConfigIndex)
+    {
+        this._cellData.SetItemConfigIndex(itemConfigIndex);
+        CheckItem(true, false);
+    }
+
+    public void RemoveItem()
+    {
+        this._cellData.SetItemConfigIndex(-1);
+        CheckItem(true, false);
+    }
     public void DestoryGameObject(bool usePool)
     {
         if (usePool)

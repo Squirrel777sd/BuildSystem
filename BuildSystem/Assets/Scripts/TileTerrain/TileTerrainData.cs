@@ -47,14 +47,11 @@ public class TileTerrainData : ConfigBase
         cellDatas = new TileTerrainCellData[mapSize.x, mapSize.y, mapSize.z];
         for (int x = 0; x < mapSize.x; x++)
         {
-            for (int y = 0; y < mapSize.y; y++)
+            for (int z = 0; z < mapSize.z; z++)
             {
-                for (int z = 0; z < mapSize.z; z++)
-                {
-                    TileTerrainCellData cellData = new TileTerrainCellData();
-                    cellData.Init(0, new Vector3Int(x, y, z), cellSize);
-                    cellDatas[x, y, z] = cellData;
-                }
+                TileTerrainCellData cellData = new TileTerrainCellData();
+                cellData.Init(0, new Vector3Int(x, 0, z), cellSize);
+                cellDatas[x, 0, z] = cellData;
             }
         }
     }
@@ -72,14 +69,10 @@ public class TileTerrainData : ConfigBase
         return terrainCellData;
     }
 
-    public void RemoveCellData()
-    { 
-    
-    }
 
-    public void replaceCellData()
-    { 
-        
+    public void RemoveCell(Vector3Int coord)
+    {
+        cellDatas[coord.x, coord.y, coord.z] = null;
     }
 #endif
 }
@@ -119,9 +112,19 @@ public class TileTerrainCellData
         }
     }
 
+    [SerializeField]
+    private int itemConfigIndex;
+    public int ItemConfigIndex
+    {
+        get
+        {
+            return itemConfigIndex;
+        }
+    }
 
     public void Init(int index, Vector3Int coord, float cellSize)
     {
+        itemConfigIndex = -1;
         this.index = index;
         this.coord = coord;
     }
@@ -129,5 +132,15 @@ public class TileTerrainCellData
     public void InitPostion(float cellSize)
     {
         this.postion = new Vector3(coord.x * cellSize + cellSize / 2, coord.y * cellSize, coord.z * cellSize + cellSize / 2);
+    }
+
+    public void SetConfigIndex(int configIndex)
+    {
+        this.index = configIndex;
+    }
+
+    public void SetItemConfigIndex(int itemConfigIndex)
+    {
+        this.itemConfigIndex = itemConfigIndex;
     }
 }

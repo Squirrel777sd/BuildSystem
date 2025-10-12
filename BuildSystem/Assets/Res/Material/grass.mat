@@ -21,8 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: grass
-  m_Shader: {fileID: -6465566751694194690, guid: 251ed49ec5fb4524089c834d221b36d3,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 90a16b09fc0a9d04181b704b29405cfe, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -74,8 +73,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_f56971d6a67f4155a89396102ca662f4_Texture_1:
-        m_Texture: {fileID: 2800000, guid: 0da3dc8912989584d95d2a5531e5477c, type: 3}
+    - _SampleTexture2D_a1c8df9893974fd79479cfaf7a487b35_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 6fdfb4cdfc2433e4499f161a2d3b3541, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -108,7 +107,6 @@ Material:
     - _DstBlend: 0
     - _EnvironmentReflections: 1
     - _Float: 0
-    - _Fresnelstrength: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -125,9 +123,9 @@ Material:
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - _off: 1
+    - _off: 0.4
     - _snowdepth: 0
-    - _snowface: 0
+    - _snowdepth1: 0
     - _spread: 1
     - _windspeed: 1
     m_Colors:
@@ -138,13 +136,14 @@ Material:
     - _Color_1: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 0}
     - _Color_2: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MainColor: {r: 0.28746888, g: 0.7169812, b: 0.31563213, a: 0}
+    - _MainColor: {r: 0.2633361, g: 0.6509434, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Vector3: {r: 0, g: 0, b: 0, a: 0}
-    - _down: {r: 1, g: 1, b: 1, a: 1}
-    - _outlineColor: {r: 0, g: 0, b: 0, a: 0}
-    - _randomColor: {r: 0.9716981, g: 0.8204432, b: 0.8204432, a: 0}
-    - _snowdir: {r: 0.17, g: 1.14, b: 0, a: 0}
-    - _top: {r: 1, g: 1, b: 1, a: 1}
+    - _down: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 0}
+    - _outlineColor: {r: 0.5754717, g: 0.1004361, b: 0.1004361, a: 0}
+    - _randomColor: {r: 0.9433962, g: 0.493948, b: 0.493948, a: 0}
+    - _snowdir: {r: 0, g: 0, b: 0, a: 0}
+    - _snowdir1: {r: 0, g: 0, b: 0, a: 0}
+    - _top: {r: 1, g: 1, b: 1, a: 0}
     - _wind: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

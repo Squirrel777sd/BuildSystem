@@ -9,8 +9,12 @@ using Sirenix.OdinInspector;
 public class TileTerrainTileConfig : ConfigBase
 {
     [ListDrawerSettings(ShowIndexLabels = true, ShowPaging = false)]
-    [OnValueChanged("OnTileConfigChanged")]
+    [OnValueChanged("OnConfigChange")]
     public List<TileTerrainConfigItem> tileConfigList = new List<TileTerrainConfigItem>();
+
+    [ListDrawerSettings(ShowIndexLabels = true, ShowPaging = false)]
+    [OnValueChanged("OnConfigChange")]
+    public List<ItemConfigItem> itemConfigList = new List<ItemConfigItem>();
 
 #if UNITY_EDITOR
     private Action onTileConfigChangedAction;
@@ -28,7 +32,7 @@ public class TileTerrainTileConfig : ConfigBase
     {
         onTileConfigChangedAction = null;
     }
-    private void OnTileConfigChanged()
+    private void OnConfigChange()
     {
         onTileConfigChangedAction?.Invoke();
     }
@@ -46,4 +50,11 @@ public class TileTerrainConfigItem
     public GameObject leftPrefab;
     public GameObject rightPrefab;
     public GameObject topPrefab;
+}
+
+[Serializable]
+public class ItemConfigItem
+{
+    public string name;
+    public GameObject prefab;
 }

@@ -38,6 +38,7 @@ public class TileTerrainEditor : OdinEditor
         }
         initMenu();
         initTileTerrainPanel();
+        initItemPanel();
         initSettingPanel();
         switchPanel(PanelType.TERRAIN);
     }
@@ -168,7 +169,7 @@ public class TileTerrainEditor : OdinEditor
     #region 面板控制
     private VisualElement panelParent;
     private List<VisualElement> panels;
-    private PanelType curPanelType;
+    private static PanelType curPanelType;
     private void initPanels()
     {
         panels = new List<VisualElement>();
@@ -261,7 +262,7 @@ public class TileTerrainEditor : OdinEditor
             // 禁止用户选择游戏物体
             HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
 
-            MeshFilter[] meshFilters = terrain.GetComponentsInChildren<MeshFilter>();
+            MeshFilter[] meshFilters = terrain.tileParent.GetComponentsInChildren<MeshFilter>();
             Vector3 mousePosition = getMousePosition();
             Ray ray = SceneCamera.ScreenPointToRay(mousePosition);
             for (int i = 0; i < meshFilters.Length; i++)
@@ -297,16 +298,123 @@ public class TileTerrainEditor : OdinEditor
                         }
                         else if (curOperation == 2)
                         {
-                            Debug.Log("降低");
                             terrain.RemoveCell(coord);
                         }
                         else if (curOperation == 3)
                         {
-                            Debug.Log("替换");
                             terrain.ReplaceCell(coord, curSelectPrefabView.TileConfigIndex);
                         }
                     }
-                    //break;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            terrain.SetWireCubePosAndOperation(Vector3Int.one * -1, -1);
+        }
+    }
+    #endregion
+
+    #region 物品面板
+
+    private static List<ItemPrefabPreView> ItemPrefabPreViews = new List<ItemPrefabPreView>();
+    private static ItemPrefabPreView curSelectItemPrefabView;
+    private VisualElement itemScrollContent;
+    private static GameObject curSelectItemObj;
+    private void initItemPanel()
+    {
+        ClearItemPrefabPreView();
+        onSelectItemPreView(curSelectItemPrefabView);
+        if (itemScrollContent == null)
+        {
+            itemScrollContent = panels[(int)PanelType.ITEM].Q<ScrollView>("ItemPrefabPreView").contentContainer;
+        }
+
+        for (int i = 0; i < terrain.tileConfig.itemConfigList.Count; i++)
+        {
+            GameObject prefab = terrain.tileConfig.itemConfigList[i].prefab;
+            ItemPrefabPreView preView = new ItemPrefabPreView();
+            preView.Init(itemScrollContent, prefab, i, onSelectItemPreView);
+            ItemPrefabPreViews.Add(preView);
+            EditorUtility.SetDirty(terrain);
+        }
+
+    }
+
+    private void ClearItemPrefabPreView()
+    {
+        curSelectItemPrefabView = null;
+        for (int i = 0; i < ItemPrefabPreViews.Count; i++)
+        {
+            ItemPrefabPreViews[i].Destory();
+        }
+        ItemPrefabPreViews.Clear();
+    }
+
+    private void onSelectItemPreView(ItemPrefabPreView curSelectPrefabView)
+    {
+        if (curSelectPrefabView == null)
+        {
+            return;
+        }
+        for (int i = 0; i < ItemPrefabPreViews.Count; i++)
+        {
+            ItemPrefabPreViews[i].UnSelect();
+        }
+        curSelectPrefabView.Select();
+        curSelectItemPrefabView = curSelectPrefabView;
+        if (curSelectItemObj != null)
+        {
+            GameObject.DestroyImmediate(curSelectItemObj);
+            curSelectItemObj = null;
+        }
+        if (curSelectItemObj == null)
+        {
+            curSelectItemObj = GameObject.Instantiate(curSelectPrefabView.itemPrefab, terrain.itemParent);
+            curSelectItemObj.name = curSelectPrefabView.itemPrefab.name;
+        }
+    }
+
+    private void onItemPanelSceneUI()
+    {
+        if (curSelectItemPrefabView != null)
+        {
+            // 禁止用户选择游戏物体
+            HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+
+            MeshFilter[] meshFilters = terrain.tileParent.GetComponentsInChildren<MeshFilter>();
+            Vector3 mousePosition = getMousePosition();
+            Ray ray = SceneCamera.ScreenPointToRay(mousePosition);
+            for (int i = 0; i < meshFilters.Length; i++)
+            {
+                MeshFilter meshFilter = meshFilters[i];
+                if (meshFilter == null)
+                {
+                    continue;
+                }
+                RaycastHit hitInfo;
+                bool isHit = InterscetRayMeshTool.IntersectRayMesh(ray, meshFilter, out hitInfo);
+                if (isHit)
+                {
+                    terrain.testGo.transform.position = hitInfo.point;
+                    Vector3Int coord = terrain.getCoordByWorldPosition(hitInfo.point);
+                    terrain.SetWireCubePosAndOperation(coord, 2);
+                    if (curSelectItemObj != null)
+                    {
+                        TileCell cell = terrain.GetCell(coord);
+                        if (cell != null)
+                        { 
+                            Vector3 pos = cell.GetCellPosition();
+                            curSelectItemObj.transform.position = new Vector3(pos.x, pos.y + terrain.CellSize, pos.z);
+                        }
+                    }
+                    if (Event.current.type == EventType.MouseDown)
+                    {
+                        TileCell tileCell = terrain.GetCell(coord);
+                        tileCell.SetItem(curSelectItemPrefabView.ItemConfigIndex);
+                        Debug.Log(curSelectItemObj.name);
+                    }
                 }
             }
         }
@@ -392,11 +500,12 @@ public class TileTerrainEditor : OdinEditor
         return root;
     }
 
-    private void OnSceneGUI()
+    public void OnSceneGUI()
     {
+
         if (true)
         {
-            //Debug.Log(1);
+            test();
         }
         if (terrain == null)
         {
@@ -414,6 +523,7 @@ public class TileTerrainEditor : OdinEditor
                 onTileTerrainPanelSceneUI();
                 break;
             case PanelType.ITEM:
+                onItemPanelSceneUI();
                 break;
             case PanelType.SETTING:
                 break;
@@ -421,9 +531,9 @@ public class TileTerrainEditor : OdinEditor
 
     }
 
-    private void test()
-    { 
-        
+    private static void test()
+    {
+
     }
 
     protected override void OnDisable()
@@ -434,6 +544,12 @@ public class TileTerrainEditor : OdinEditor
         }
         curSelectPrefabView = null;
         ClearPrefabPreviews();
+        ClearItemPrefabPreView();
+        if (curSelectItemObj != null)
+        {
+            GameObject.DestroyImmediate(curSelectItemObj);
+            curSelectItemObj = null;
+        }
         base.OnDisable();
     }
     #endregion

@@ -34,3 +34,16 @@ MonoBehaviour:
     leftPrefab: {fileID: 3416664906331972434, guid: dcae3f56a1be39648b0f0599b704038e, type: 3}
     rightPrefab: {fileID: 3416664906331972434, guid: dcae3f56a1be39648b0f0599b704038e, type: 3}
     topPrefab: {fileID: 115375668271999736, guid: a5a819e74819734418914c1d230eaa9f, type: 3}
+  itemConfigList:
+  - name: Dtree
+    prefab: {fileID: 3990280503096366059, guid: c0f198b0ce32b79438c57e8fd4c9e79d, type: 3}
+  - name: grass
+    prefab: {fileID: 3806347248703722130, guid: 567b8d8e9d83ee84180f7123920a3a35, type: 3}
+  - name: stone
+    prefab: {fileID: 3752327301042018365, guid: 2529f4e3bc416104baacb5b1ca2af346, type: 3}
+  - name: tree1
+    prefab: {fileID: 6464288667271050462, guid: f4d6aff889b3d6048bd7b786b2f51030, type: 3}
+  - name: tree2
+    prefab: {fileID: 7952554379706108833, guid: 2aae8581a632db64791556b117dc693c, type: 3}
+  - name: water
+    prefab: {fileID: 536414250590165451, guid: 7f9f97038ce68a3479c3f56b55c338e5, type: 3}

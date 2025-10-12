@@ -6,14 +6,14 @@
         <ui:Button text="设置" display-tooltip-when-elided="true" name="SettingTab" style="width: 100px; height: 20px;" />
     </uie:Toolbar>
     <ui:VisualElement name="PanelParent" style="height: 109px; width: 328px; flex-direction: column; align-items: flex-start; justify-content: flex-start; margin-top: 5px; margin-right: 0; margin-bottom: 0; margin-left: 0; visibility: visible; left: 2px;">
-        <ui:VisualElement name="TerrainPanle" style="align-items: stretch; justify-content: center; width: 100%; background-color: rgba(0, 0, 0, 0.63);">
+        <ui:VisualElement name="TerrainPanle" style="align-items: stretch; justify-content: center; width: 100%; background-color: rgba(0, 0, 0, 0.63); height: auto;">
             <ui:ScrollView mode="Horizontal" horizontal-scroller-visibility="AlwaysVisible" vertical-scroller-visibility="Hidden" name="TileTerrainPrefabView" style="height: 50px;" />
             <ui:DropdownField label="操作" choices="无,升高,降低,替换" name="operationTypeDp" />
         </ui:VisualElement>
-        <ui:VisualElement name="ItemPanel" style="align-items: stretch; justify-content: center; width: 100%;">
-            <ui:Label text="2" display-tooltip-when-elided="true" enable-rich-text="false" name="tabLabel" />
+        <ui:VisualElement name="ItemPanel" style="align-items: stretch; justify-content: center; width: 100%; height: 100px;">
+            <ui:ScrollView name="ItemPrefabPreView" mode="Horizontal" horizontal-scroller-visibility="AlwaysVisible" vertical-scroller-visibility="AlwaysVisible" style="width: 100%; height: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px;" />
         </ui:VisualElement>
-        <ui:VisualElement name="SettingPanel" style="align-items: stretch; justify-content: center; width: 100%;">
+        <ui:VisualElement name="SettingPanel" style="align-items: stretch; justify-content: center; width: 100%; height: 80px;">
             <uie:FloatField label="格子尺寸" value="42.2" name="CellSize" readonly="false" focusable="true" />
             <uie:Vector3IntField label="地图尺寸" name="MapSize" />
         </ui:VisualElement>
