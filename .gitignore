@@ -1,0 +1,8 @@
+Library
+Logs
+/BuildSystem/*.vsconfig
+/BuildSystem/*.sln
+/BuildSystem/.vs/BuildSystem/v16/*.suo
+/BuildSystem/*.csproj
+/BuildSystem/obj
+/BuildSystem/Temp

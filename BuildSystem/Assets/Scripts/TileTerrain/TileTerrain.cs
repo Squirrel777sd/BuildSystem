@@ -1,0 +1,284 @@
+using Sirenix.OdinInspector;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
+public class TileTerrain : MonoBehaviour
+{
+    [LabelText("地块配置")]
+    [OnValueChanged("OnConfigOrDataChanged")]
+    public TileTerrainTileConfig tileConfig;
+
+    [LabelText("地形配置")]
+    [OnValueChanged("OnConfigOrDataChanged")]
+    public TileTerrainData terrainData;
+
+
+    public GameObject testGo;
+
+    public Transform tileParent;
+    public Transform itemParent;
+    private TileTerrainCellData[,,] cellData
+    {
+        get
+        {
+            return terrainData.cellDatas;
+        }
+    }
+    private TileCell[,,] cells;
+
+    public float CellSize
+    {
+        get
+        {
+            return terrainData.cellSize;
+        }
+    }
+
+    #region Editor
+
+#if UNITY_EDITOR
+    private Action onConfiggOrDataChangeAction;
+    public void SetOnTileConfigChangeAction(Action action)
+    {
+        onConfiggOrDataChangeAction = action;
+    }
+    public void OnConfigOrDataChanged()
+    {
+        onConfiggOrDataChangeAction?.Invoke();
+    }
+
+    public void CleanCellsForEditor()
+    {
+        while (tileParent.childCount > 0)
+        {
+            DestroyImmediate(tileParent.GetChild(0).gameObject);
+        }
+        while (itemParent.childCount > 0)
+        {
+            DestroyImmediate(itemParent.GetChild(0).gameObject);
+        }
+    }
+
+    public void CreateAllCellGameObjectForEditor()
+    {
+        CleanCellsForEditor();
+        for (int x = 0; x < terrainData.mapSize.x; x++)
+        {
+            for (int y = 0; y < terrainData.mapSize.y; y++)
+            {
+                for (int z = 0; z < terrainData.mapSize.z; z++)
+                {
+                    TileCell cell = cells[x, y, z];
+                    if (cell != null)
+                    {
+                        cell.CheckAllFace(true, false);
+                        cell.CheckItem(true,false);
+                        cells[x, y, z] = cell;
+                    }
+                }
+            }
+        }
+    }
+
+    private Vector3Int wireCubePos;
+    private int operationType = -1;
+    public void SetWireCubePosAndOperation(Vector3Int pos, int operationType)
+    {
+        wireCubePos = pos;
+        this.operationType = operationType;
+    }
+
+    public void OnDrawGizmos()
+    {
+        if (terrainData.enablePreview && wireCubePos != null && wireCubePos != Vector3.one * -1)
+        {
+            if (wireCubePos.x > terrainData.mapSize.x ||
+                wireCubePos.y > terrainData.mapSize.y ||
+                wireCubePos.z > terrainData.mapSize.z ||
+                operationType == -1)
+            {
+                return;
+            }
+            Color color = Color.white;
+            if (operationType == 1)
+            {
+                color = Color.green;
+            }
+            else if (operationType == 2)
+            { 
+                color = Color.red;
+            }
+            Gizmos.color = color;
+            TileCell cell = GetCell(wireCubePos);
+            if (cell == null || operationType == -1)
+            {
+                return;
+            }
+            Vector3 cellPos = cell.GetCellPosition();
+            if (operationType == 1)
+            {
+                Gizmos.DrawWireCube(new Vector3(cellPos.x, cellPos.y + CellSize + CellSize / 2, cellPos.z), Vector3.one * CellSize);
+                return;
+            }
+
+            Gizmos.DrawWireCube(new Vector3(cellPos.x, cellPos.y + CellSize / 2, cellPos.z), Vector3.one * CellSize);
+        }
+    }
+#endif
+    #endregion
+
+
+    #region 格子
+
+    // 创建具体的格子类 填充数据 但是并不会创建游戏物体
+    // 不能直接绘制，因为运行时，不回绘制全部格子
+    public void CreateAllCell()
+    {
+        if (tileConfig != null && terrainData != null && cellData != null)
+        {
+            cells = new TileCell[terrainData.mapSize.x, terrainData.mapSize.y, terrainData.mapSize.z];
+            for (int x = 0; x < terrainData.mapSize.x; x++)
+            {
+                for (int y = 0; y < terrainData.mapSize.y; y++)
+                {
+                    for (int z = 0; z < terrainData.mapSize.z; z++)
+                    {
+                        TileTerrainCellData data = this.terrainData.cellDatas[x, y, z];
+                        if (data != null)
+                        {
+                            data.InitPostion(CellSize);
+                            TileCell cell = new TileCell();
+                            cell.init(tileParent, itemParent, this, data, tileConfig.tileConfigList[data.Index]);
+                            cells[x, y, z] = cell;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public TileCell CreateCell(int configIndex, Vector3Int coord, TileTerrainCellData cellData)
+    {
+        TileCell tileCell = new TileCell();
+        TileTerrainConfigItem item = tileConfig.tileConfigList[configIndex];
+        tileCell.init(tileParent, itemParent, this, cellData, item);
+        cells[coord.x, coord.y, coord.z] = tileCell;
+        return tileCell;
+    }
+
+    public void AddCell(int configIndex, Vector3Int coord)
+    {
+        TileTerrainCellData cellData = terrainData.AddCellData(configIndex, coord);
+        TileCell tileCell = CreateCell(configIndex, coord, cellData);
+        tileCell.CheckAllFace(true, false);
+        GetForwordCell(coord)?.CheckAllFace(true, false);
+        GetBackCell(coord)?.CheckAllFace(true, false);
+        GetLeftCell(coord)?.CheckAllFace(true, false);
+        GetRightCell(coord)?.CheckAllFace(true, false);
+        GetBottomCell(coord)?.CheckAllFace(true, false);
+        GetTopCell(coord)?.CheckAllFace(true, false);
+    }
+
+    public void RemoveCell(Vector3Int coord)
+    {
+        if (coord.y < 1)
+        {
+            Debug.LogError("最底层不能删除");
+            return;
+        }
+        terrainData.RemoveCell(coord);
+        TileCell cell = cells[coord.x, coord.y, coord.z];
+        if (cell == null)
+        {
+            Debug.LogError("删除对象为null");
+            return;
+        }
+        cell.DestoryGameObject(false);
+        cells[coord.x, coord.y, coord.z] = null;
+        GetBackCell(coord)?.CheckAllFace(true, false);
+        GetLeftCell(coord)?.CheckAllFace(true, false);
+        GetRightCell(coord)?.CheckAllFace(true, false);
+        GetBottomCell(coord)?.CheckAllFace(true, false);
+        GetTopCell(coord)?.CheckAllFace(true, false);
+    }
+
+    public void ReplaceCell(Vector3Int coord, int configIndex)
+    {
+        TileTerrainConfigItem configItem = tileConfig.tileConfigList[configIndex];
+        TileCell cell = cells[coord.x, coord.y, coord.z];
+        cell.ReplaceAll(configItem, configIndex);
+    }
+
+    public TileCell GetCell(int x, int y, int z)
+    {
+        if (x < 0 || x >= terrainData.mapSize.x || y < 0 || y >= terrainData.mapSize.y || z < 0 || z >= terrainData.mapSize.z)
+        {
+            return null;
+        }
+        return cells[x, y, z];
+    }
+
+    public TileCell GetCell(Vector3Int coord)
+    {
+        return GetCell(coord.x, coord.y, coord.z);
+    }
+
+    public TileCell GetForwordCell(Vector3Int coord)
+    {
+        return GetCell(coord.x, coord.y, coord.z + 1);
+    }
+
+    public TileCell GetBackCell(Vector3Int coord)
+    {
+        return GetCell(coord.x, coord.y, coord.z - 1);
+    }
+
+    public TileCell GetLeftCell(Vector3Int coord)
+    {
+        return GetCell(coord.x - 1, coord.y, coord.z);
+    }
+
+    public TileCell GetRightCell(Vector3Int coord)
+    {
+        return GetCell(coord.x + 1, coord.y, coord.z);
+    }
+
+    public TileCell GetTopCell(Vector3Int coord)
+    {
+        return GetCell(coord.x, coord.y + 1, coord.z);
+    }
+
+    public TileCell GetBottomCell(Vector3Int coord)
+    {
+        return GetCell(coord.x, coord.y - 1, coord.z);
+    }
+
+    public TileCell GetCellByWorldPostion(Vector3 pos)
+    {
+        return GetCell(getCoordByWorldPosition(pos));
+    }
+
+    public Vector3Int getCoordByWorldPosition(Vector3 worldPostion)
+    {
+        float offset = CellSize / 2;
+        int x = Mathf.RoundToInt(Mathf.Clamp(worldPostion.x / CellSize - offset, 0, terrainData.mapSize.x - 1));
+        int y = Mathf.RoundToInt(Mathf.Clamp(worldPostion.y / CellSize - offset, 0, terrainData.mapSize.y - 1));
+        int z = Mathf.RoundToInt(Mathf.Clamp(worldPostion.z / CellSize - offset, 0, terrainData.mapSize.z - 1));
+
+        return new Vector3Int(x, y, z);
+    }
+
+
+    public List<ItemConfigItem> getItemConfigList()
+    {
+        return tileConfig.itemConfigList;
+    }
+
+    public List<TileTerrainConfigItem> getTileConfigList()
+    {
+        return tileConfig.tileConfigList;
+    }
+    #endregion
+}

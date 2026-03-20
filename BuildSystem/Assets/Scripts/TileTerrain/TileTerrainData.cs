@@ -1,0 +1,159 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using JKFrame;
+using System;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+
+[CreateAssetMenu(fileName = "TerrainData", menuName = "TileTerrain/TerrainData")]
+public class TileTerrainData : ConfigBase
+{
+    public float cellSize = 1;
+    public Vector3Int mapSize = new Vector3Int(10, 5, 10);
+    public TileTerrainCellData[,,] cellDatas;
+
+#if UNITY_EDITOR
+    public bool enablePreview;
+    public void Save()
+    {
+        EditorUtility.SetDirty(this);
+        AssetDatabase.SaveAssetIfDirty(this);
+    }
+
+    public void SetCellSize(float cellSize)
+    {
+        this.cellSize = cellSize;
+        this.CreateDefultData();
+        Save();
+    }
+
+    public void SetMapSize(Vector3Int mapSize)
+    {
+        this.mapSize = mapSize;
+        this.CreateDefultData();
+        Save();
+    }
+
+    private void Reset()
+    {
+        CreateDefultData();
+    }
+
+    public void CreateDefultData()
+    {
+        cellDatas = new TileTerrainCellData[mapSize.x, mapSize.y, mapSize.z];
+        for (int x = 0; x < mapSize.x; x++)
+        {
+            for (int z = 0; z < mapSize.z; z++)
+            {
+                TileTerrainCellData cellData = new TileTerrainCellData();
+                cellData.Init(0, new Vector3Int(x, 0, z), cellSize);
+                cellDatas[x, 0, z] = cellData;
+            }
+        }
+    }
+
+    public TileTerrainCellData AddCellData(int configIndex,Vector3Int coord)
+    {
+        if (coord.y >= mapSize.y)
+        {
+            Debug.LogError("无法再抬高,超出地图上限");
+        }
+        TileTerrainCellData terrainCellData = new TileTerrainCellData();
+        terrainCellData.Init(configIndex,coord,this.cellSize);
+        terrainCellData.InitPostion(cellSize);
+        cellDatas[coord.x, coord.y, coord.z] = terrainCellData;
+        return terrainCellData;
+    }
+
+
+    public void RemoveCell(Vector3Int coord)
+    {
+        cellDatas[coord.x, coord.y, coord.z] = null;
+    }
+#endif
+}
+
+
+/// <summary>
+/// 单个地形格子的数据
+/// </summary>
+[Serializable]
+public class TileTerrainCellData
+{
+    /// <summary>
+    /// 地图块配置索引
+    /// </summary>
+    [SerializeField]
+    private int index;
+    public int Index
+    {
+        get
+        {
+            return index;
+        }
+    }
+
+    /// <summary>
+    /// 地图块坐标
+    /// </summary>
+    [SerializeField]
+    private Vector3Int coord;
+    public Vector3Int Coord 
+    {
+        get
+        {
+            return coord;
+        }
+    }
+
+    /// <summary>
+    /// 地图块位置
+    /// </summary>
+    private Vector3 postion;
+    public Vector3 Postion
+    {
+        get
+        {
+            return postion;
+        }
+    }
+
+    /// <summary>
+    /// 物品配置索引
+    /// </summary>
+    [SerializeField]
+    private int itemConfigIndex;
+    public int ItemConfigIndex
+    {
+        get
+        {
+            return itemConfigIndex;
+        }
+    }
+
+    public void Init(int index, Vector3Int coord, float cellSize)
+    {
+        itemConfigIndex = -1;
+        this.index = index;
+        this.coord = coord;
+    }
+
+    public void InitPostion(float cellSize)
+    {
+        this.postion = new Vector3(coord.x * cellSize + cellSize / 2, coord.y * cellSize, coord.z * cellSize + cellSize / 2);
+    }
+
+    public void SetConfigIndex(int configIndex)
+    {
+        this.index = configIndex;
+    }
+
+    public void SetItemConfigIndex(int itemConfigIndex)
+    {
+        this.itemConfigIndex = itemConfigIndex;
+    }
+}
