@@ -8,7 +8,7 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName = "TileConfig",menuName = "TileTerrain/TileConfig")]
 public class TileTerrainTileConfig : ConfigBase
 {
-    [ListDrawerSettings(ShowIndexLabels = true, ShowPaging = false)]
+    [ListDrawerSettings(ShowIndexLabels = true, ShowPaging = true)]
     [OnValueChanged("OnConfigChange")]
     public List<TileTerrainConfigItem> tileConfigList = new List<TileTerrainConfigItem>();
 

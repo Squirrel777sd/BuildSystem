@@ -102,6 +102,16 @@ public class TileTerrain : MonoBehaviour
             {
                 return;
             }
+            Color color = Color.white;
+            if (operationType == 1)
+            {
+                color = Color.green;
+            }
+            else if (operationType == 2)
+            { 
+                color = Color.red;
+            }
+            Gizmos.color = color;
             TileCell cell = GetCell(wireCubePos);
             if (cell == null || operationType == -1)
             {

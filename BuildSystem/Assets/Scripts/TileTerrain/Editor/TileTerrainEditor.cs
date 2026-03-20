@@ -1,11 +1,12 @@
+using Sirenix.OdinInspector.Editor;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
-using Sirenix.OdinInspector.Editor;
-using UnityEngine.UIElements;
+using UnityEditor.PackageManager;
 using UnityEditor.UIElements;
-using System;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 [CustomEditor(typeof(TileTerrain))]
 public class TileTerrainEditor : OdinEditor
@@ -112,6 +113,21 @@ public class TileTerrainEditor : OdinEditor
         mousePosition.y = SceneCamera.pixelHeight - eventMousePos.y;
         return mousePosition;
 
+    }
+
+    private bool leftShiftKeyDown = false;
+
+    private void updateLeftShiftKeyDown()
+    {
+        if (Event.current.type == EventType.KeyDown)
+        {
+            leftShiftKeyDown = Event.current.keyCode == KeyCode.LeftShift;
+        }
+        else if (Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.LeftShift)
+        {
+            leftShiftKeyDown = false;
+        }
+        Debug.Log(leftShiftKeyDown);
     }
     #endregion
 
@@ -248,6 +264,9 @@ public class TileTerrainEditor : OdinEditor
 
     }
 
+    /// <summary>
+    /// 1:增加 2.移除 3.替换
+    /// </summary>
     private static int curOperation = -1;
     private void onDpValueChange(ChangeEvent<string> evt)
     {
@@ -255,16 +274,20 @@ public class TileTerrainEditor : OdinEditor
         curOperation = operationTypeDp.index;
     }
 
+
     private void onTileTerrainPanelSceneUI()
     {
+        HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+        Vector3Int coord = Vector3Int.down;
+        Vector3 testGoPos = Vector3.zero;
         if (curOperation != 0 && curSelectPrefabView != null)
         {
             // 禁止用户选择游戏物体
-            HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
 
             MeshFilter[] meshFilters = terrain.tileParent.GetComponentsInChildren<MeshFilter>();
             Vector3 mousePosition = getMousePosition();
             Ray ray = SceneCamera.ScreenPointToRay(mousePosition);
+            float minDis = -1;
             for (int i = 0; i < meshFilters.Length; i++)
             {
                 MeshFilter meshFilter = meshFilters[i];
@@ -274,38 +297,43 @@ public class TileTerrainEditor : OdinEditor
                 }
                 RaycastHit hitInfo;
                 bool isHit = InterscetRayMeshTool.IntersectRayMesh(ray, meshFilter, out hitInfo);
-                if (isHit)
+                if (isHit && (minDis < 0 || minDis > hitInfo.distance))
                 {
-                    terrain.testGo.transform.position = hitInfo.point;
-                    Vector3Int coord = terrain.getCoordByWorldPosition(hitInfo.point);
-                    if (curOperation == 1)
-                    {
-                        TileCell topCell = terrain.GetTopCell(coord);
-                        if (topCell == null)
-                        {
-                            terrain.SetWireCubePosAndOperation(coord, curOperation);
-                        }
-                    }
-                    else
-                    {
-                        terrain.SetWireCubePosAndOperation(coord, curOperation);
-                    }
-                    if (Event.current.type == EventType.MouseDown)
-                    {
-                        if (curOperation == 1)
-                        {
-                            terrain.AddCell(curSelectPrefabView.TileConfigIndex, new Vector3Int(coord.x, coord.y + 1, coord.z));
-                        }
-                        else if (curOperation == 2)
-                        {
-                            terrain.RemoveCell(coord);
-                        }
-                        else if (curOperation == 3)
-                        {
-                            terrain.ReplaceCell(coord, curSelectPrefabView.TileConfigIndex);
-                        }
-                    }
-                    break;
+                    testGoPos = hitInfo.point;
+                    minDis = hitInfo.distance;
+                    coord = terrain.getCoordByWorldPosition(hitInfo.point);
+                }
+            }
+            if (coord.y < 0 || minDis < 0)
+            {
+                return;
+            }
+            terrain.testGo.transform.position = testGoPos;
+            if (curOperation == 1)
+            {
+                TileCell topCell = terrain.GetTopCell(coord);
+                if (topCell == null)
+                {
+                    terrain.SetWireCubePosAndOperation(coord, curOperation);
+                }
+            }
+            else
+            {
+                terrain.SetWireCubePosAndOperation(coord, curOperation);
+            }
+            if (Event.current.type == EventType.MouseDown)
+            {
+                if (curOperation == 1)
+                {
+                    terrain.AddCell(curSelectPrefabView.TileConfigIndex, new Vector3Int(coord.x, coord.y + 1, coord.z));
+                }
+                else if (curOperation == 2)
+                {
+                    terrain.RemoveCell(coord);
+                }
+                else if (curOperation == 3)
+                {
+                    terrain.ReplaceCell(coord, curSelectPrefabView.TileConfigIndex);
                 }
             }
         }
@@ -339,7 +367,6 @@ public class TileTerrainEditor : OdinEditor
             ItemPrefabPreViews.Add(preView);
             EditorUtility.SetDirty(terrain);
         }
-
     }
 
     private void ClearItemPrefabPreView()
@@ -386,6 +413,8 @@ public class TileTerrainEditor : OdinEditor
             MeshFilter[] meshFilters = terrain.tileParent.GetComponentsInChildren<MeshFilter>();
             Vector3 mousePosition = getMousePosition();
             Ray ray = SceneCamera.ScreenPointToRay(mousePosition);
+            float minDis = -1;
+            Vector3Int coord = -Vector3Int.one;
             for (int i = 0; i < meshFilters.Length; i++)
             {
                 MeshFilter meshFilter = meshFilters[i];
@@ -395,25 +424,36 @@ public class TileTerrainEditor : OdinEditor
                 }
                 RaycastHit hitInfo;
                 bool isHit = InterscetRayMeshTool.IntersectRayMesh(ray, meshFilter, out hitInfo);
-                if (isHit)
+                if (isHit && (minDis < 0 || minDis > hitInfo.distance))
                 {
-                    terrain.testGo.transform.position = hitInfo.point;
-                    Vector3Int coord = terrain.getCoordByWorldPosition(hitInfo.point);
-                    terrain.SetWireCubePosAndOperation(coord, 2);
-                    if (curSelectItemObj != null)
+                    minDis = hitInfo.distance;
+                    coord = terrain.getCoordByWorldPosition(hitInfo.point);
+                }
+            }
+            if (minDis != -1)
+            {
+                terrain.SetWireCubePosAndOperation(coord, leftShiftKeyDown ? 2 : 1);
+                curSelectItemObj.SetActive(!leftShiftKeyDown);
+                if (curSelectItemObj != null)
+                {
+                    TileCell cell = terrain.GetCell(coord);
+                    if (cell != null)
                     {
-                        TileCell cell = terrain.GetCell(coord);
-                        if (cell != null)
-                        { 
-                            Vector3 pos = cell.GetCellPosition();
-                            curSelectItemObj.transform.position = new Vector3(pos.x, pos.y + terrain.CellSize, pos.z);
-                        }
+                        Vector3 pos = cell.GetCellPosition();
+                        curSelectItemObj.transform.position = new Vector3(pos.x, pos.y + terrain.CellSize, pos.z);
                     }
-                    if (Event.current.type == EventType.MouseDown)
+                }
+                if (Event.current.type == EventType.MouseDown)
+                {
+                    TileCell tileCell = terrain.GetCell(coord);
+                    if (tileCell == null) return;
+                    if (leftShiftKeyDown)
                     {
-                        TileCell tileCell = terrain.GetCell(coord);
+                        tileCell.RemoveItem();
+                    }
+                    else
+                    {
                         tileCell.SetItem(curSelectItemPrefabView.ItemConfigIndex);
-                        Debug.Log(curSelectItemObj.name);
                     }
                 }
             }
@@ -502,11 +542,6 @@ public class TileTerrainEditor : OdinEditor
 
     public void OnSceneGUI()
     {
-
-        if (true)
-        {
-            test();
-        }
         if (terrain == null)
         {
             return;
@@ -516,7 +551,7 @@ public class TileTerrainEditor : OdinEditor
             return;
         }
 
-
+        updateLeftShiftKeyDown();
         switch (curPanelType)
         {
             case PanelType.TERRAIN:
@@ -528,11 +563,6 @@ public class TileTerrainEditor : OdinEditor
             case PanelType.SETTING:
                 break;
         }
-
-    }
-
-    private static void test()
-    {
 
     }
 

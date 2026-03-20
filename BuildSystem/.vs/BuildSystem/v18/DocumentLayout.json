@@ -1,0 +1,141 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\work\\BuildSystem\\BuildSystem\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{BCC6376B-6C49-41F4-58D6-F2483C4D5A52}|Assembly-CSharp-Editor.csproj|c:\\work\\buildsystem\\buildsystem\\assets\\scripts\\tileterrain\\editor\\tileterraineditor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCC6376B-6C49-41F4-58D6-F2483C4D5A52}|Assembly-CSharp-Editor.csproj|solutionrelative:assets\\scripts\\tileterrain\\editor\\tileterraineditor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631F8370-D0AF-2343-3A24-F531EA6C002D}|Assembly-CSharp.csproj|C:\\work\\BuildSystem\\BuildSystem\\assets\\scripts\\tileterrain\\tileterrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631F8370-D0AF-2343-3A24-F531EA6C002D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\tileterrain\\tileterrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631F8370-D0AF-2343-3A24-F531EA6C002D}|Assembly-CSharp.csproj|C:\\work\\BuildSystem\\BuildSystem\\assets\\scripts\\tileterrain\\tileterraintileconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631F8370-D0AF-2343-3A24-F531EA6C002D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\tileterrain\\tileterraintileconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631F8370-D0AF-2343-3A24-F531EA6C002D}|Assembly-CSharp.csproj|C:\\work\\BuildSystem\\BuildSystem\\assets\\scripts\\tileterrain\\tilecell.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631F8370-D0AF-2343-3A24-F531EA6C002D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\tileterrain\\tilecell.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{631F8370-D0AF-2343-3A24-F531EA6C002D}|Assembly-CSharp.csproj|C:\\work\\BuildSystem\\BuildSystem\\assets\\scripts\\tileterrain\\tileterraindata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{631F8370-D0AF-2343-3A24-F531EA6C002D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\tileterrain\\tileterraindata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BCC6376B-6C49-41F4-58D6-F2483C4D5A52}|Assembly-CSharp-Editor.csproj|C:\\work\\BuildSystem\\BuildSystem\\assets\\scripts\\tileterrain\\editor\\tool\\interscetraymeshtool.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCC6376B-6C49-41F4-58D6-F2483C4D5A52}|Assembly-CSharp-Editor.csproj|solutionrelative:assets\\scripts\\tileterrain\\editor\\tool\\interscetraymeshtool.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BCC6376B-6C49-41F4-58D6-F2483C4D5A52}|Assembly-CSharp-Editor.csproj|C:\\work\\BuildSystem\\BuildSystem\\assets\\scripts\\tileterrain\\editor\\tileprefabpreview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCC6376B-6C49-41F4-58D6-F2483C4D5A52}|Assembly-CSharp-Editor.csproj|solutionrelative:assets\\scripts\\tileterrain\\editor\\tileprefabpreview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TileTerrainEditor.cs",
+              "DocumentMoniker": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\Editor\\TileTerrainEditor.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\TileTerrain\\Editor\\TileTerrainEditor.cs",
+              "ToolTip": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\Editor\\TileTerrainEditor.cs",
+              "RelativeToolTip": "Assets\\Scripts\\TileTerrain\\Editor\\TileTerrainEditor.cs",
+              "ViewState": "AgIAAFQAAAAAAAAAAAAYwIAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-28T10:04:19.663Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TileTerrainTileConfig.cs",
+              "DocumentMoniker": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\TileTerrainTileConfig.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\TileTerrain\\TileTerrainTileConfig.cs",
+              "ToolTip": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\TileTerrainTileConfig.cs",
+              "RelativeToolTip": "Assets\\Scripts\\TileTerrain\\TileTerrainTileConfig.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAADwvyoAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-28T10:46:50.194Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "TilePrefabPreView.cs",
+              "DocumentMoniker": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\Editor\\TilePrefabPreView.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\TileTerrain\\Editor\\TilePrefabPreView.cs",
+              "ToolTip": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\Editor\\TilePrefabPreView.cs",
+              "RelativeToolTip": "Assets\\Scripts\\TileTerrain\\Editor\\TilePrefabPreView.cs",
+              "ViewState": "AgIAACUAAAAAAAAAAAAAwEoAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-28T10:32:52.732Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "InterscetRayMeshTool.cs",
+              "DocumentMoniker": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\Editor\\Tool\\InterscetRayMeshTool.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\TileTerrain\\Editor\\Tool\\InterscetRayMeshTool.cs",
+              "ToolTip": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\Editor\\Tool\\InterscetRayMeshTool.cs",
+              "RelativeToolTip": "Assets\\Scripts\\TileTerrain\\Editor\\Tool\\InterscetRayMeshTool.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-28T10:04:19.67Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TileTerrain.cs",
+              "DocumentMoniker": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\TileTerrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\TileTerrain\\TileTerrain.cs",
+              "ToolTip": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\TileTerrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\TileTerrain\\TileTerrain.cs",
+              "ViewState": "AgIAAEQAAAAAAAAAAAAnwFcAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-28T05:26:09.499Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TileTerrainData.cs",
+              "DocumentMoniker": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\TileTerrainData.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\TileTerrain\\TileTerrainData.cs",
+              "ToolTip": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\TileTerrainData.cs",
+              "RelativeToolTip": "Assets\\Scripts\\TileTerrain\\TileTerrainData.cs",
+              "ViewState": "AgIAAEwAAAAAAAAAAAAUwJwAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T06:59:43.29Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TileCell.cs",
+              "DocumentMoniker": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\TileCell.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\TileTerrain\\TileCell.cs",
+              "ToolTip": "C:\\work\\BuildSystem\\BuildSystem\\Assets\\Scripts\\TileTerrain\\TileCell.cs",
+              "RelativeToolTip": "Assets\\Scripts\\TileTerrain\\TileCell.cs",
+              "ViewState": "AgIAADwBAAAAAAAAAAAowFUBAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T06:06:05.088Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -84,6 +84,9 @@ public class TileTerrainData : ConfigBase
 [Serializable]
 public class TileTerrainCellData
 {
+    /// <summary>
+    /// 地图块配置索引
+    /// </summary>
     [SerializeField]
     private int index;
     public int Index
@@ -93,6 +96,10 @@ public class TileTerrainCellData
             return index;
         }
     }
+
+    /// <summary>
+    /// 地图块坐标
+    /// </summary>
     [SerializeField]
     private Vector3Int coord;
     public Vector3Int Coord 
@@ -103,6 +110,9 @@ public class TileTerrainCellData
         }
     }
 
+    /// <summary>
+    /// 地图块位置
+    /// </summary>
     private Vector3 postion;
     public Vector3 Postion
     {
@@ -112,6 +122,9 @@ public class TileTerrainCellData
         }
     }
 
+    /// <summary>
+    /// 物品配置索引
+    /// </summary>
     [SerializeField]
     private int itemConfigIndex;
     public int ItemConfigIndex
